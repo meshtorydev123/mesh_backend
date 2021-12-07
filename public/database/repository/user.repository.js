@@ -21,20 +21,30 @@ const user_entity_1 = require("../entity/user.entity");
 let UserRepository = class UserRepository extends typeorm_1.Repository {
     saveUserData(req, res, hashedPassword) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { username, userphone, userfullname } = req.body;
+            let { user_username, user_phone, user_fullname } = req.body;
             this.createQueryBuilder("users").insert().values({
-                userphone,
-                userfullname,
-                userpassword: hashedPassword,
-                username
+                user_phone,
+                user_fullname,
+                user_password: hashedPassword,
+                user_username
             }).execute();
         });
     }
-    findUserPassword(req, res, username) {
+    in_GetUserUid(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { user_username } = req.body;
+            let getbaseuseruid = this.createQueryBuilder("users")
+                .select("users.user_uid")
+                .where("users.user_username = :user_username", { user_username })
+                .getOne();
+            return getbaseuseruid;
+        });
+    }
+    findUserPassword(req, res, user_username) {
         return __awaiter(this, void 0, void 0, function* () {
             let getbaseuserpassword = this.createQueryBuilder("users")
-                .select("users.userpassword")
-                .where("users.username = :username", { username })
+                .select("users.user_password")
+                .where("users.user_username = :user_username", { user_username })
                 .getOne();
             if (getbaseuserpassword === undefined) {
                 return res.send({
@@ -45,13 +55,110 @@ let UserRepository = class UserRepository extends typeorm_1.Repository {
             return getbaseuserpassword;
         });
     }
-    updateprofilephoto(req, res, profilephotourl) {
+    updateprofilephoto(req, res, profilephotourl, user_uid) {
         return __awaiter(this, void 0, void 0, function* () {
-            let { username } = req.body;
             this.createQueryBuilder("users").update()
-                .set({ userprofilephoto: profilephotourl })
-                .where("username = :username", { username: username })
+                .set({ user_profilephoto: profilephotourl })
+                .where("user_uid = :user_uid", { user_uid: user_uid })
                 .execute();
+        });
+    }
+    updateusername(req, res, user_uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { user_username } = req.body;
+            this.createQueryBuilder("users").update()
+                .set({ user_username: user_username })
+                .where("user_uid = :user_uid", { user_uid: user_uid })
+                .execute();
+        });
+    }
+    updateuserfullname(req, res, user_uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { user_fullname } = req.body;
+            this.createQueryBuilder("users").update()
+                .set({ user_fullname: user_fullname })
+                .where("user_uid = :user_uid", { user_uid: user_uid })
+                .execute();
+        });
+    }
+    updateuseremail(req, res, user_uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { user_email } = req.body;
+            this.createQueryBuilder("users").update()
+                .set({ user_email: user_email })
+                .where("user_uid = :user_uid", { user_uid: user_uid })
+                .execute();
+        });
+    }
+    updateuserphone(req, res, user_uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { user_phone } = req.body;
+            this.createQueryBuilder("users").update()
+                .set({ user_phone: user_phone })
+                .where("user_uid = :user_uid", { user_uid: user_uid })
+                .execute();
+        });
+    }
+    updateuserwebsite(req, res, user_uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { user_website } = req.body;
+            this.createQueryBuilder("users").update()
+                .set({ user_website: user_website })
+                .where("user_uid = :user_uid", { user_uid: user_uid })
+                .execute();
+        });
+    }
+    updateusergender(req, res, user_uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { user_gender } = req.body;
+            this.createQueryBuilder("users").update()
+                .set({ user_gender: user_gender })
+                .where("user_uid = :user_uid", { user_uid: user_uid })
+                .execute();
+        });
+    }
+    updateuserdob(req, res, user_uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { user_dob } = req.body;
+            this.createQueryBuilder("users").update()
+                .set({ user_dob: user_dob })
+                .where("user_uid = :user_uid", { user_uid: user_uid })
+                .execute();
+        });
+    }
+    updateuserbio(req, res, user_uid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let { user_bio } = req.body;
+            this.createQueryBuilder("users").update()
+                .set({ user_bio: user_bio })
+                .where("user_uid = :user_uid", { user_uid: user_uid })
+                .execute();
+        });
+    }
+    testModelData(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let post = yield this.createQueryBuilder("posts")
+                    .leftJoinAndSelect("posts.post_user", "users")
+                    .select()
+                    .getMany();
+                if (post !== undefined) {
+                    return res.send({
+                        code: 200,
+                        data: post,
+                        received: true,
+                    });
+                }
+            }
+            catch (error) {
+                if (error !== undefined) {
+                    return res.send({
+                        code: 401,
+                        data: error,
+                        received: false,
+                    });
+                }
+            }
         });
     }
 };

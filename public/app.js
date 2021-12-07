@@ -19,9 +19,19 @@ const typeorm_1 = require("typeorm");
 const authentication_routes_1 = require("./routes/authentication.routes");
 const ormconfig_1 = __importDefault(require("./ormconfig"));
 require("reflect-metadata");
+const post_routes_1 = require("./routes/post.routes");
+const usersettings_routes_1 = require("./routes/usersettings.routes");
+const like_routes_1 = require("./routes/like.routes");
+const bookmark_routes_1 = require("./routes/bookmark.routes");
+const comment_routes_1 = require("./routes/comment.routes");
+const userconnection_routes_1 = require("./routes/userconnection.routes");
+const directchatconversation_routes_1 = require("./routes/directchatconversation.routes");
+const directchatmessage_routes_1 = require("./routes/directchatmessage.routes");
+const publicmesh_routes_1 = require("./routes/publicmesh.routes");
 const app = (0, express_1.default)();
 const port = process.env.PORT;
-let jwt_secret_key = process.env.JWT_SECRET_KEY;
+let http = require("http").Server(app);
+let io = require("socket.io")(http);
 (0, typeorm_1.createConnection)(ormconfig_1.default).then((connection) => __awaiter(void 0, void 0, void 0, function* () {
     if (connection.isConnected) {
         console.log("Postgres Connected");
@@ -34,7 +44,19 @@ let jwt_secret_key = process.env.JWT_SECRET_KEY;
             data: "meshtory  01"
         });
     });
-    app.use("/user", authentication_routes_1.authrouter);
+    app.use("/userAuthentication", authentication_routes_1.userAuthenticationRouter);
+    app.use("/post", post_routes_1.postRouter);
+    app.use("/userSettings", usersettings_routes_1.userSettingsRouter);
+    app.use("/like", like_routes_1.likeRouter);
+    app.use("/bookmark", bookmark_routes_1.bookmarkRouter);
+    app.use("/comment", comment_routes_1.commentRouter);
+    app.use("/userconnection", userconnection_routes_1.userconnectionRouter);
+    app.use("/directchatconversation", directchatconversation_routes_1.directChatConversationRouter);
+    app.use("/directchatmessage", directchatmessage_routes_1.directChatMessageRouter);
+    app.use("/publicmesh", publicmesh_routes_1.publicmeshRouter);
+    io.on("connection", function (socket) {
+        console.log("a user connected");
+    });
     app.listen(app.get("port"), () => {
         console.log(`your server is running on port ${app.get("port")}`);
     });
