@@ -40,6 +40,8 @@ export class AuthenticationController{
         }
         )
     }
+
+
     static async loginwithusername(req:Request,res:Response){
       let {user_username,user_password}=req.body;
       let jwt_secret_key = process.env.JWT_SECRET_KEY as string;
@@ -48,8 +50,6 @@ export class AuthenticationController{
       let userdata = await userRepository.findUserPassword(req,res,user_username);
       let uid = await userRepository.in_GetUserUid(req,res);
 
-
-      
       if (userdata === undefined) {
         return res.send({
           code: 404,
@@ -57,7 +57,6 @@ export class AuthenticationController{
           authentication: false,
         });
       }
-
       bcrypt.compare(user_password,userdata!.user_password,async (error:any,result:any)=>{
         if(error){
           return res.send({
@@ -105,11 +104,33 @@ export class AuthenticationController{
 
     }
 
-    static async test(req:Request,res:Response){
+    static async myprofiledata(req:Request,res:Response){
 
-      let userRepository=getCustomRepository(UserRepository);
-      await userRepository.testModelData(req,res);
-    }
+
+      let verifyToken = await Middleware.checkToken(req,res);
+      if(verifyToken === true ){
+
+        let userRepository=getCustomRepository(UserRepository);
+          userRepository.myprofiledata(req,res,Middleware.tokenData.user_uid);
+          
+          
+      }
+      else{
+
+        return res.send({
+          code: 401,
+          message: "User not verified. Login Again",
+          authentication: false,
+        });
+      
+      }
+    } 
+
+
+
+
+
+    
 
 }
 

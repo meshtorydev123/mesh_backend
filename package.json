@@ -11,7 +11,7 @@
   "author": "zameel",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.1028.0",
+    "aws-sdk": "^2.1048.0",
     "bcrypt": "^5.0.1",
     "cassandra-driver": "^4.6.3",
     "dotenv": "^10.0.0",

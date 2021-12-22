@@ -7,6 +7,7 @@ import { Request, Response } from "express";
 export class UserRepository extends Repository<UserEntity> {
 
     async saveUserData(req: Request, res: Response, hashedPassword: any) {
+
         let { user_username, user_phone, user_fullname } = req.body;
 
         this.createQueryBuilder("users").insert().values({
@@ -29,7 +30,7 @@ export class UserRepository extends Repository<UserEntity> {
             .getOne();
         return getbaseuseruid;
     }
-
+    
     async findUserPassword(req: Request, res: Response, user_username: string): Promise<any> {
         let getbaseuserpassword = this.createQueryBuilder("users")
             .select("users.user_password")
@@ -45,6 +46,7 @@ export class UserRepository extends Repository<UserEntity> {
         return getbaseuserpassword;
     }
 
+
     async updateprofilephoto(req: Request, res: Response, profilephotourl: string, user_uid: string) {
 
 
@@ -54,7 +56,6 @@ export class UserRepository extends Repository<UserEntity> {
             .execute();
 
     }
-
     async updateusername(req: Request, res: Response, user_uid: string) {
         let { user_username } = req.body;
 
@@ -138,30 +139,41 @@ export class UserRepository extends Repository<UserEntity> {
 
     }
 
-    async testModelData(req: Request, res: Response): Promise<any> {
+    async myprofiledata(req: Request, res: Response, user_uid: string) {
+
+        console.log(user_uid);
+
+
+
+
         try {
-            let post = await this.createQueryBuilder("posts")
-              .leftJoinAndSelect("posts.post_user", "users")
-              .select()
-              .getMany();
-      
-            if (post !== undefined) {
-              return res.send({
-                code: 200,
-                data: post,
-                received: true,
-              });
+            let userprofiledata =await this.createQueryBuilder("users")
+                .select()
+                .where("users.user_uid = :user_uid", { user_uid })
+                .getOne();
+
+            if (userprofiledata !== undefined) {
+                return res.send({
+                    message: "User found",
+                    data: userprofiledata,
+                    code: 200
+                });
             }
-          } catch (error) {
+        } catch (error) {
             if (error !== undefined) {
-              return res.send({
-                code: 401,
-                data: error,
-                received: false,
-              });
+                console.log(error);
+                return res.send({
+                    data: "",
+                    code: 203,
+                });
             }
-          }
+        }
+
+
+
+
     }
+
 
 
 

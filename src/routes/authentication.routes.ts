@@ -4,7 +4,7 @@ const userAuthenticationRouter = Router();
 
 userAuthenticationRouter.post("/signup",AuthenticationController.createNewAccount);
 userAuthenticationRouter.post("/loginwithusername",AuthenticationController.loginwithusername);
-userAuthenticationRouter.get("/test",AuthenticationController.test);
+userAuthenticationRouter.get("/myprofiledata",AuthenticationController.myprofiledata);
 
 
 
